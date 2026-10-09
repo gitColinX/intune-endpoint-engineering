@@ -1,8 +1,8 @@
-# Verify the metadata, not the edit: an MSI that installed per user
+# Patch agent install context
 
 2026-08-07. A patch management agent's MSI went into Intune as a Win32 app and
 installed in the user context, which is useless for an agent that patches the
-machine. The package was the problem, not the assignment.
+machine. The assignment was fine. The cause was in the package.
 
 Pattern from this case: [`msi/`](../../msi) (`Set-MsiProperty`, `Get-IntuneWinMetadata`).
 
@@ -22,7 +22,7 @@ took the app's install context from there.
 4. Opened the new `.intunewin` (it is a zip) and read
    `IntuneWinPackage/Metadata/Detection.xml`.
 
-## What broke
+## Checking the package
 
 The first attempt still said User. The property edit had looked fine, but the
 package metadata said otherwise, and I never pinned down why. I redid the
@@ -32,15 +32,13 @@ first Intune app object and created the app again from the corrected package.
 
 Three Inspect folders from that day read User, User, System.
 
-## What I took from it
+## What I changed afterwards
 
-- Verify the thing the platform reads, not the thing you changed. Here that
-  was `Detection.xml`, not the MSI.
-- Editing an MSI breaks its signature. Keep the pristine original and say what
-  you changed in the app notes. For changes that only matter at install time,
-  prefer a transform when the vendor supports one. It would not have helped
-  here: IntuneWinAppUtil reads the MSI itself when it records the execution
-  context, so the property had to be in the MSI.
-- This MSI was configured for our tenant by the vendor portal, so it never
-  leaves the packaging share. The technique is what is shareable, and it is in
-  `msi/MsiTools.psm1`, tested on a synthetic MSI.
+- I gate the re-wrap on a read-back, then check `Detection.xml` inside the
+  `.intunewin`, because that is what Intune reads.
+- Editing an MSI breaks its signature, so I keep the vendor's original
+  untouched and edit a copy. A transform would not have worked here, because
+  IntuneWinAppUtil reads the MSI itself when it records the execution context.
+- This MSI was configured for our tenant by the vendor portal, so it stays on
+  the packaging share. The technique is in `msi/MsiTools.psm1`, tested on a
+  synthetic MSI.

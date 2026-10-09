@@ -1,8 +1,8 @@
-# 667 of 707 Failed were false: auto-updating agents and product-code detection
+# Remote support client false failures
 
 September 2026. A remote support client, deployed a month earlier as a Win32
 app, showed 707 of 764 devices Failed in Intune. The agent itself was working
-fine on most of them.
+on most of them.
 
 Patterns from this case: [`win32/DETECTION-RULES.md`](../../win32/DETECTION-RULES.md),
 [`win32/detection`](../../win32/detection), [`triage/`](../../triage) (`--present-list`).
@@ -14,7 +14,7 @@ MSI product-code detection rule no longer matched, Intune kept trying to
 reinstall the older package, and that failed. My part was proving it with
 data and fixing it.
 
-## The proof
+## Checking it
 
 All read-only, through Graph, the same day:
 
@@ -35,7 +35,7 @@ So 667 of the 707 failures were false, and the real remediation list was 40
 devices. The report's error column matched the mechanism: installing the older
 MSI over a newer running client fails with 1603, shown as 0x80070643.
 
-## The fix, and what broke
+## The fix
 
 I changed the detection rule to "file exists" on the client's service
 executable, at a path that does not change between versions, and added a
@@ -52,9 +52,9 @@ for the notes field, so that went in through the portal afterwards.
 
 ## What I did not do
 
-- I did not re-measure the failure count after the fix. The expected result
-  was Failed collapsing to roughly the 40 real devices as devices re-evaluated;
-  I have no export showing it.
+- I did not re-measure the failure count after the fix. I expected Failed to
+  drop to roughly the 40 real devices as devices re-evaluated, but I have no
+  export showing it.
 
 ## Two more things the data showed
 
@@ -64,14 +64,13 @@ for the notes field, so that went in through the portal afterwards.
 - Assigning an app Required to all users on top of all devices doubles the
   report rows. A device assignment is enough for a machine-wide agent.
 
-## What I took from it
+## What I changed afterwards
 
-- Product-code detection is the Intune default for an MSI and it is correct
-  for apps that do not update themselves. It is wrong for agents that do.
-- Turning off the agent's auto-update to make the report green is the wrong
-  fix; auto-update is how security fixes reach the agent. Change the rule, not
-  the agent.
-- Join the report against inventory before believing a failure count.
-- Close portal blades before changing an app through Graph, and read the app
-  back after.
-- Credit the person who had the idea. The data is what made it a fix.
+- I stopped using product-code detection for agents that update themselves.
+  It is the Intune default for an MSI and still fine for apps that do not.
+- I left the agent's auto-update on, because that is how its security fixes
+  arrive, and changed the detection rule instead.
+- I join the install report against inventory before I trust a failure
+  count. The triage tool's `--present-list` option does the same offline.
+- I close portal blades before changing an app through Graph, and read the
+  app back afterwards.
