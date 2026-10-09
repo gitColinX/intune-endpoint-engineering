@@ -1,0 +1,37 @@
+# Configured copies of the templates. They can hold install tokens, customer
+# IDs or internal URLs. Keep them next to the template, never in git.
+*.local.ps1
+*.local.json
+
+# Vendor media and packaging output: never redistributable, often tenant-configured.
+*.msi
+*.msp
+*.mst
+*.exe
+*.intunewin
+*.cab
+*.zip
+
+# Recorded InstallShield response files hold whatever was typed into the
+# registration dialog. Only the synthetic sample is tracked.
+*.iss
+!*.sample.iss
+
+# Script and tool output: device names, logs, evidence bundles.
+triage-out/
+out/
+*.log
+*.evtx
+*.reg
+Evidence_*
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Editors and OS
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini

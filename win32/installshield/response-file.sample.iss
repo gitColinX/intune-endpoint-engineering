@@ -1,0 +1,27 @@
+[InstallShield Silent]
+Version=v7.00
+File=Response File
+[File Transfer]
+OverwrittenReadOnly=NoToAll
+[{00000000-0000-0000-0000-000000000000}-DlgOrder]
+Dlg0={00000000-0000-0000-0000-000000000000}-SdWelcome-0
+Count=5
+Dlg1={00000000-0000-0000-0000-000000000000}-SdLicense2-0
+Dlg2={00000000-0000-0000-0000-000000000000}-SdRegisterUser-0
+Dlg3={00000000-0000-0000-0000-000000000000}-SdAskDestPath-0
+Dlg4={00000000-0000-0000-0000-000000000000}-SdFinish-0
+[{00000000-0000-0000-0000-000000000000}-SdWelcome-0]
+Result=1
+[{00000000-0000-0000-0000-000000000000}-SdLicense2-0]
+Result=1
+[{00000000-0000-0000-0000-000000000000}-SdRegisterUser-0]
+szName=Example User
+szCompany=Example Organization
+Result=1
+[{00000000-0000-0000-0000-000000000000}-SdAskDestPath-0]
+szDir=C:\Program Files\Example\App
+Result=1
+[{00000000-0000-0000-0000-000000000000}-SdFinish-0]
+Result=1
+bOpt1=0
+bOpt2=0
